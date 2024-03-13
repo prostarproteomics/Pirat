@@ -19,7 +19,6 @@ Estimate the inverse-gamma parameters from the distribution of
 observed peptide variances in an abundance table.
 }
 \examples{
-library(Pirat)
 data(subbouyssie)
 obj <- subbouyssie
 # Keep only fully observed peptides

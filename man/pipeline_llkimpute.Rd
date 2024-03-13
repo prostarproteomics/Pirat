@@ -2,8 +2,11 @@
 % Please edit documentation in R/pipeline_impute.R
 \name{pipeline_llkimpute}
 \alias{pipeline_llkimpute}
+\alias{my_pipeline_llkimpute}
 \title{Pirat imputation function}
 \usage{
+my_pipeline_llkimpute(ARG_VALUE_1, ...)
+
 pipeline_llkimpute(
   data.pep.rna.mis,
   pep.ab.comp = NULL,
@@ -18,6 +21,10 @@ pipeline_llkimpute(
 )
 }
 \arguments{
+\item{ARG_VALUE_1}{xxx}
+
+\item{...}{xxx}
+
 \item{data.pep.rna.mis}{A list containing important elements of the dataset 
 to impute. Must contain:
 **peptides_ab**, the peptide or precursor abundance matrix to impute, with 
@@ -72,6 +79,10 @@ display more details on the process}
 }
 \value{
 The imputed **data.pep.rna.mis$peptides_ab** table.
+
+The imputed **data.pep.rna.mis$peptides_ab** table.
+
+NA
 }
 \description{
 Imputation pipeline of Pirat. First, it creates PGs. Then,
@@ -82,18 +93,17 @@ desired extension.
 }
 \examples{
 # Pirat classical mode
-library(Pirat)
 data(subbouyssie)
-pipeline_llkimpute(subbouyssie) 
+my_pipeline_llkimpute(subbouyssie) 
 
 # Pirat with transcriptomic integration for singleton PGs
-library(Pirat)
 data(subropers)
 nsamples = nrow(subropers$peptides_ab)
-pipeline_llkimpute(subropers, 
+my_pipeline_llkimpute(subropers, 
                    extension = "T",
                    rna.cond.mask = 1:nsamples, 
                    pep.cond.mask = 1:nsamples,
                    max.pg.size.pirat.t = 1)
-
+data(subbouyssie)
+my_pipeline_llkimpute(subbouyssie)
 }

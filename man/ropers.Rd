@@ -4,6 +4,9 @@
 \name{ropers}
 \alias{ropers}
 \title{Bouyssie dataset}
+\value{
+A dataset
+}
 \description{
 xxxxxx
 }

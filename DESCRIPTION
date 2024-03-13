@@ -38,10 +38,9 @@ Depends:
   R (>= 4.4.0)
 Imports:
     basilisk, reticulate, progress, ggplot2, MASS, invgamma, grDevices, stats,
-    graphics, rstudioapi, SummarizedExperiment
-Suggests: knitr
+    graphics, SummarizedExperiment
+Suggests: knitr, BiocStyle
 VignetteBuilder: knitr
 URL: http://www.prostar-proteomics.org/
 BugReports: https://github.com/prostarproteomics/Pirat/issues
 StagedInstall: no
-

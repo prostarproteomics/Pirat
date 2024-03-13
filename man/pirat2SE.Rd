@@ -23,7 +23,6 @@ This function converts the original dataset structure into
 a SummarizedExperiment .
 }
 \examples{
-library(SummarizedExperiment)
 data(subbouyssie)
 peptides_ab <- subbouyssie$peptides_ab
 adj <- subbouyssie$adj

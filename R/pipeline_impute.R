@@ -8,7 +8,6 @@
 #' @export
 #'
 #' @examples
-#' library(Pirat)
 #' data(subbouyssie)
 #' estimate_gamma(subbouyssie$peptides_ab)
 #' 
@@ -74,7 +73,6 @@ estimate_gamma = function(pep.ab.table,
 #' @export
 #'
 #' @examples
-#' library(Pirat)
 #' data(subbouyssie)
 #' obj <- subbouyssie
 #' # Keep only fully observed peptides
@@ -162,26 +160,66 @@ estimate_psi_df = function(pep.ab.table) {
 #' @import MASS
 #' @import invgamma
 #' @import graphics
-#' @import stats
 #'
 #' @return The imputed **data.pep.rna.mis$peptides_ab** table.
 #' @export
+#' 
+#' @name pipeline_llkimpute
 #'
 #' @examples
 #' # Pirat classical mode
-#' library(Pirat)
 #' data(subbouyssie)
-#' pipeline_llkimpute(subbouyssie) 
+#' my_pipeline_llkimpute(subbouyssie) 
 #' 
 #' # Pirat with transcriptomic integration for singleton PGs
-#' library(Pirat)
 #' data(subropers)
 #' nsamples = nrow(subropers$peptides_ab)
-#' pipeline_llkimpute(subropers, 
+#' my_pipeline_llkimpute(subropers, 
 #'                    extension = "T",
 #'                    rna.cond.mask = 1:nsamples, 
 #'                    pep.cond.mask = 1:nsamples,
 #'                    max.pg.size.pirat.t = 1)
+NULL
+
+
+
+#' @title xxx
+#' @rdname pipeline_llkimpute
+#' 
+#' @param ARG_VALUE_1 xxx
+#' @param ... xxx
+#' 
+#' @examples
+#' data(subbouyssie)
+#' my_pipeline_llkimpute(subbouyssie)
+#' @export
+#' 
+#' @importFrom stats cov
+#' 
+#' @return The imputed **data.pep.rna.mis$peptides_ab** table.
+#' 
+my_pipeline_llkimpute <- function(ARG_VALUE_1, ...) { 
+  proc <- basilisk::basiliskStart(envPirat)
+  on.exit(basilisk::basiliskStop(proc))
+  
+  some_useful_thing <- basilisk::basiliskRun(proc, 
+    fun = function(arg1, ...) {
+      py <- reticulate::import("torch", delay_load = FALSE)
+      source_own_pyScripts()
+      output <- pipeline_llkimpute(arg1, ...)
+      
+      # The return value MUST be a pure R object, i.e., no reticulate
+      # Python objects, no pointers to shared memory. 
+      output 
+    }, arg1=ARG_VALUE_1, ...)
+  
+  some_useful_thing
+}
+
+
+
+#' @rdname pipeline_llkimpute
+#' @return NA
 #' 
 pipeline_llkimpute = function(data.pep.rna.mis,
                               pep.ab.comp = NULL,
@@ -194,7 +232,11 @@ pipeline_llkimpute = function(data.pep.rna.mis,
                               max.pg.size.pirat.t = 1,
                               verbose = FALSE) {
   
+  set.seed(98765)
   psi_rna = NULL
+  
+  if(verbose)
+    cat("extension: ", extension, "\n")
   
   if( verbose)
     cat("Remove nested prots...")
@@ -304,7 +346,7 @@ pipeline_llkimpute = function(data.pep.rna.mis,
       idx.pep.s1 <- which(rowSums(.tmp) >= 1)
       imputed.data.wo.s1 <- t(data.imputed[, -idx.pep.s1])
       peps1 <- t(data.pep.rna.mis$peptides_ab[, idx.pep.s1])
-      cov.imputed <- cov(imputed.data.wo.s1)
+      cov.imputed <- stats::cov(imputed.data.wo.s1)
       mean.imputed <- colMeans(imputed.data.wo.s1)
       peps1.imputed <- py$impute_from_params(peps1, 
                                             mean.imputed, 

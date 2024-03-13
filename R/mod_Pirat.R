@@ -11,11 +11,13 @@
 #' display more details on the process
 #' 
 #' @name mod_Pirat
+#' 
+#' @return A shiny app
 #'
 NULL
 
 #' @rdname mod_Pirat
-#' 
+#' @return A shiny app
 #' @export
 #' 
 mod_Pirat_ui <- function(id){
@@ -33,6 +35,8 @@ mod_Pirat_ui <- function(id){
 
 #' @rdname mod_Pirat
 #' @export
+#' @return A shiny app
+#' 
 mod_Pirat_server <- function(id,
                              obj = reactive({NULL}),
                              reset = reactive({NULL}),
@@ -83,7 +87,7 @@ mod_Pirat_server <- function(id,
       shiny::withProgress(
         withCallingHandlers(
          # out <- long_run_op(num_iter=10),
-           dataOut$value <- pipeline_llkimpute(obj(),
+           dataOut$value <- my_pipeline_llkimpute(obj(),
                                                extension = input$extension,
                                                verbose = verbose),
            dataOut$trigger <- as.numeric(Sys.time()),
@@ -113,7 +117,7 @@ mod_Pirat_server <- function(id,
      
     # observeEvent(input$valid_btn, {
     #   
-    #   dataOut$value <- pipeline_llkimpute(bouyssie,  extension = input$extension)
+    #   dataOut$value <- my_pipeline_llkimpute(bouyssie,  extension = input$extension)
     #   
     #   print('test')
     #   dataOut$trigger <- as.numeric(Sys.time())

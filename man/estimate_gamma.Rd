@@ -19,7 +19,6 @@ A list of the containing missingness parameters gamma_0 and gamma_1.
 Estimate missingness parameters Gamma
 }
 \examples{
-library(Pirat)
 data(subbouyssie)
 estimate_gamma(subbouyssie$peptides_ab)
 

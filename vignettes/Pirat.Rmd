@@ -1,10 +1,14 @@
 ---
 title: "Pirat"
-author: "Lucas Etourneau, Samuel Wieczorek"
+author: 
+- name: Lucas Etourneau
+- name: Samuel Wieczorek"
+package: Pirat
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
-    fig_caption: yes
+    BiocStyle::html_document:
+        toc_float: true
+        fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Pirat}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,73 +20,56 @@ bibliography:
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
 )
 ```
 
-## Table of content
 
-1. [Pirat installation](#pi)
-2. [Standard imputation with Pirat](#siwp)
-3. [Intra-PG correlation analysis](#ipgca)
-4. [Pirat extensions](#pe)
-5. [Session info](#sessionInfo)
-6. [References](#refs)
-
-### 1. Pirat installation <a name="pi"></a>
-
-### Prerequest
-
-The functions in Pirat use some Python libraries. Before installing Pirat, it is necessary to have Python 3.9.5 installed on the computer.
-This version can be found here:
-https://www.python.org/downloads/release/python-395/
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
 
 
-### Installation
+
+# Installation
+
 
 To install this package from Github:
 
-```{r, eval=F}
+```{r install_pkg, eval = FALSE}
 library(remotes)
 remotes::install_github('prostarproteomics/Pirat')
 ```
 
 Once the package has been installed, it is necessary to install a Python environment (called r-pirat in the package) with specific versions of Python libraries. For this purpose, run: 
 
-```{r, eval=F}
-Pirat::install_pirat()
-```
-
-<!-- If Python is not found by R during environment installation, you can either execute -->
-<!-- ```{r, eval=F} -->
-<!-- reticulate::use_python("path_to_python_binary") -->
-<!-- ``` -->
-<!-- Or, if you are using RStudio, set your RStudio Python interpreter to the one installed on your machine (in your RStudio window, go in "Global Options" -> "Python" -> "python interpreter"). Then, retry to install the Python environment r-pirat. -->
-
-
-This will install all necessary Python modules and restart the R session. Infos about versions can be obtained with:
-```{r, eval=F}
-Pirat::pirat_config()
+```{r install_pirat, eval = TRUE}
+#Pirat::install_pirat()
+library(Pirat)
 ```
 
 
-## 2. Standard imputation with Pirat <a name="siwp"></a>
+# Standard imputation with Pirat
 
 Pirat is a single imputation pipeline including a novel statistical approach dedicated to bottom-up proteomics data. All the technical details and the validation procedure of this method in available on the corresponding preprint @Etourneau2023 .
 To demonstrate its usage, we first load Pirat package and a subset of Bouyssie2020 dataset in the environment.
-```{r}
-library(Pirat)
-data("subbouyssie")
+
+```{r load_data, echo = TRUE}
+#data(subbouyssie)
 ```
 
 Note that `subbouyssie` is actually a list that contains two elements:
 
 1. `peptides_ab`, the matrix of peptide log-2-abundances, with samples in rows and peptides in columns.
-2. `adj`, the adjacency matrix between peptides and proteins, containing etiher booleans or 0s and 1s (not preprocessing or simplification is needed for this matrix, Pirat will automatically build the PGs from it).
+2. `adj`, the adjacency matrix between peptides and proteins, containing etiher booleans or 0s and 1s (no preprocessing or simplification is needed for this matrix, Pirat will automatically build the PGs from it).
 
 One can then impute this dataset with the following line
+
 ```{r}
-imp.res <- pipeline_llkimpute(subbouyssie)
+#imp.res <- my_pipeline_llkimpute(subbouyssie)
 ```
 
 The first plot represents the goodness of fit of the inverse-gamma prior, whereas the second one
@@ -94,64 +81,71 @@ The result `imp.res` is a list that contains:
 2. `params`, a list containing parameters $\Gamma$ and hyperparameters $\alpha$ and $\beta$.
 
 You can check the imputed values here...
+
 ```{r test1}
-head(imp.res$data.imputed[,1:5])
+#head(imp.res$data.imputed[,1:5])
 ```
 
 ...and the computed parameters here.
+
 ```{r}
-imp.res$params
+#imp.res$params
 ```
 Note that a positive value for $\gamma1$ indicates that a random left-truncation mechanism
 is present in the dataset.
 
-## 3. Intra-PG correlation analysis <a name="ipgca"></a>
+# Intra-PG correlation analysis
 
 Pirat has a diagnosis tool that compares distributions of correlations at random and those from same peptide groups (PGs).
 We use it here on the complete Ropers2021 dataset.
+
 ```{r}
-data("ropers")
-plot_pep_correlations(ropers, titlename = "Ropers2021")
+#data("subropers")
+#plot_pep_correlations(subropers, titlename = "Ropers2021")
 ```
  We see here that the blue distribution has much more weights on high correlations than the red one,
  indicating that PGs should clearly help for imputation.
  
-## 4. Pirat extensions <a name="pe"></a>
+# Pirat extensions
  
 To handle singleton PGs, Pirat proposes three extentions, on top of the classical Pirat approach.
 Note that the -T extensions can be applied to up to an arbitrary PG size.
 To illustrate our examples, we use a subset of Ropers2021 dataset.
  
-### -2, the 2-peptide rule
+# -2, the 2-peptide rule
  
 The -2 extension simply consists in not imputing singleton PGs. It can be used as following.
+
 ```{r}
-data("subropers")
-imp.res = pipeline_llkimpute(subropers, extension = "2")
+#data("subropers")
+#imp.res = pipeline_llkimpute(subropers, extension = "2")
 ```
 
 We can then check that singleton peptides are not imputed (yet some may be already fully observed).
+
 ```{r}
-idx.sing.pg = which(colSums(subropers$adj) == 1)
-idx.sing.pep = which(rowSums(subropers$adj[, idx.sing.pg]) >= 1)
-imp.res$data.imputed[, idx.sing.pep]
+#idx.sing.pg = which(colSums(subropers$adj) == 1)
+#idx.sing.pep = which(rowSums(subropers$adj[, idx.sing.pg]) >= 1)
+#imp.res$data.imputed[, idx.sing.pep]
 ```
 
-### -S, samples-wise correlations
+# -S, samples-wise correlations
 
 Pirat can leverage sample-wise correlations to impute the singleton peptides as following:
+
 ```{r}
-imp.res = pipeline_llkimpute(subropers, extension = "S")
+#imp.res = my_pipeline_llkimpute(subropers, extension = "S")
 ```
 
 Here singleton peptides are impute after the rest of the dataset, using sample-wise correlations obtained.
+
 ```{r}
-idx.sing.pg = which(colSums(subropers$adj) == 1)
-idx.sing.pep = which(rowSums(subropers$adj[, idx.sing.pg]) >= 1)
-imp.res$data.imputed[, idx.sing.pep]
+#idx.sing.pg = which(colSums(subropers$adj) == 1)
+#idx.sing.pep = which(rowSums(subropers$adj[, idx.sing.pg]) >= 1)
+#imp.res$data.imputed[, idx.sing.pep]
 ```
 
-### -T, transcriptomic integration
+# -T, transcriptomic integration
 
 The last extension consists in using correlations between peptides and gene/transcript expression obtained from a related transcriptomic analysis. To use this extension, the list of the dataset must contain:
 
@@ -159,42 +153,45 @@ The last extension consists in using correlations between peptides and gene/tran
 * `adj_rna_pg`, a adjacency matrix between transcripts or genes and PGs, containing either booleans or 0s and 1s.
 
 `ropers` proteomic and transcriptomic samples are paired (*i.e.* the same biological samples were used for each type of analysis). Thus Pirat-T can be used as following:
+
 ```{r}
-imp.res = pipeline_llkimpute(subropers,
-                             extension = "T",
-                             rna.cond.mask = 1:nrow(ropers$peptides_ab),
-                             pep.cond.mask = 1:nrow(ropers$peptides_ab),
-                             max.pg.size.pirat.t = 1)
+#imp.res = my_pipeline_llkimpute(subropers,
+#                             extension = "T",
+#                             rna.cond.mask = 1:nrow(ropers$peptides_ab),
+#                             pep.cond.mask = 1:nrow(ropers$peptides_ab),
+#                             max.pg.size.pirat.t = 1)
 ```
 
 Only few peptides have been used to fit the prior variance distribution in  , as we use a small subset from the original Ropers2021 dataset. Thus the goodness of fit may vary a lot depending on the subset chosen.
 
 And gives following imputed singletons:
+
 ```{r}
-idx.sing.pg = which(colSums(subropers$adj) == 1)
-idx.sing.pep = which(rowSums(subropers$adj[, idx.sing.pg]) >= 1)
-imp.res$data.imputed[, idx.sing.pep]
+#idx.sing.pg = which(colSums(subropers$adj) == 1)
+#idx.sing.pep = which(rowSums(subropers$adj[, idx.sing.pg]) >= 1)
+#imp.res$data.imputed[, idx.sing.pep]
 ```
 
 On the other hand, if proteomic and transcriptomic samples are not paired but are derived from a same biological/experimental condition. Pirat-T can be use by adapting the mask related to samples in each type of analysis (here, both proteomic and transcriptomic samples 6 different conditions with 3 replicates each, and conditions appear in the same order):
+
 ```{r}
-imp.res = pipeline_llkimpute(subropers,
-                             extension = "T",
-                             rna.cond.mask = rep(1:6, each = 3),
-                             pep.cond.mask = rep(1:6, each = 3),
-                             max.pg.size.pirat.t = 1)
+#imp.res = my_pipeline_llkimpute(subropers,
+#                             extension = "T",
+#                             rna.cond.mask = rep(1:6, each = 3),
+#                             pep.cond.mask = rep(1:6, each = 3),
+#                             max.pg.size.pirat.t = 1)
 ```
 
 Also, it is possible to apply transcriptomic integration up to an arbitrary size of PG, simply by 
-changing parameter `max.pg.size.pirat.t` in `pipeline_llkimpute` to the desired limit PG size (*e.g.* `+Inf` for whole dataset).
+changing parameter `max.pg.size.pirat.t` in `my_pipeline_llkimpute()` to the desired limit PG size (*e.g.* `+Inf` for whole dataset).
 
-## 5. Session info
+# 5. Session info
 
 ```{r}
-sessionInfo()
+#sessionInfo()
 ```
 
-## 6. References (#refs)
+# References
 
 
 
