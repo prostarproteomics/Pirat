@@ -37,9 +37,11 @@ BiocViews: Proteomics,  MassSpectrometry
 Depends:
   R (>= 4.4.0)
 Imports:
-    reticulate, progress, ggplot2, MASS, invgamma, grDevices, stats,
+    basilisk, reticulate, progress, ggplot2, MASS, invgamma, grDevices, stats,
     graphics, rstudioapi, SummarizedExperiment
 Suggests: knitr
 VignetteBuilder: knitr
 URL: http://www.prostar-proteomics.org/
 BugReports: https://github.com/prostarproteomics/Pirat/issues
+StagedInstall: no
+
