@@ -186,12 +186,15 @@ NULL
 #' @title xxx
 #' @rdname pipeline_llkimpute
 #' 
-#' @param ARG_VALUE_1 xxx
-#' @param ... xxx
+#' @param ARG_VALUE_1 Parameter 'data.pep.rna.mis' of the function `pipeline_llkimpute()`
+#' @param ... Additional parameters for the function `pipeline_llkimpute()`
+#' 
+#' @seealso [pipeline_llkimpute()]
 #' 
 #' @examples
 #' data(subbouyssie)
-#' my_pipeline_llkimpute(subbouyssie)
+#' imp.data <- my_pipeline_llkimpute(subbouyssie)
+#' 
 #' @export
 #' 
 #' @importFrom stats cov
