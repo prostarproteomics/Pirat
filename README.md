@@ -1,3 +1,1 @@
-# Pirat_test
-
-https://github.com/edyp-lab/Pirat
+The Pirat repository has moved to https://github.com/edyp-lab/Pirat
